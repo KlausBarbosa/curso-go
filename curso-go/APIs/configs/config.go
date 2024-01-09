@@ -20,12 +20,12 @@ type conf struct {
 
 func LoadConfig(path string) (*conf, error) {
 	var cfg *conf
-	viper.SetConfigName("app_config")
 	viper.SetConfigType("env")
-	viper.AddConfigPath(path)
 	viper.SetConfigFile(".env")
+	viper.SetConfigName("app")
+	viper.AddConfigPath(path)
+
 	viper.AutomaticEnv()
-	//	realiza a config automatica das variaveis de ambiente, ou seja, ainda que tenhamos o arquivo no .env, ira pegar da var ambiente
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)
