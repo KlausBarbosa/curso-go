@@ -1,6 +1,9 @@
 package rabbitmq
 
-import amqp "github.com/rabbitmq/amqp091-go"
+import (
+	amqp "github.com/rabbitmq/amqp091-go"
+	"time"
+)
 
 func OpenChannel() (*amqp.Channel, error) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/") //user:senha@enderecorabbitmq:porta/namespace
@@ -32,6 +35,24 @@ func Consume(ch *amqp.Channel, outmsg chan<- amqp.Delivery) error {
 	}
 	for msg := range msgs {
 		outmsg <- msg //pega cada mensagem na fila do RabbitMQ e joga para fora, no canal p/ ser lido em outra thread
+	}
+	return nil
+}
+
+func Publish(ch *amqp.Channel, body string, queue string) error {
+	err := ch.Publish(
+		queue,
+		"",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Timestamp:   time.Time{},
+			Body:        []byte(body),
+		},
+	)
+	if err != nil {
+		return err
 	}
 	return nil
 }
